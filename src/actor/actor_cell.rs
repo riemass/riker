@@ -125,8 +125,8 @@ impl ActorCell {
         self.inner.children.len() > 0
     }
 
-    pub(crate) fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a> {
-        Box::new(self.inner.children.iter().clone())
+    pub(crate) fn children<'a>(&'a self) -> ChildrenIterator<'a> {
+        self.inner.children.iter().clone()
     }
 
     pub(crate) fn user_root(&self) -> BasicActorRef {
@@ -409,7 +409,7 @@ impl<Msg> ExtendedCell<Msg>
         self.cell.is_child(actor)
     }
 
-    pub fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a> {
+    pub fn children<'a>(&'a self) -> ChildrenIterator<'a> {
         self.cell.children()
     }
 

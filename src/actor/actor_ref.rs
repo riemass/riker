@@ -6,7 +6,7 @@ use crate::{
     actor::{
         Actor, ActorUri, ActorPath, BoxActorProd,
         CreateError,
-        actor_cell::{ActorCell, ExtendedCell}
+        actor_cell::{ActorCell, ChildrenIterator, ExtendedCell}
     }
 };
 
@@ -35,7 +35,7 @@ pub trait ActorReference {
     fn is_child(&self, actor: &BasicActorRef) -> bool;
 
     /// Iterator over children references.
-    fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a>;
+    fn children<'a>(&'a self) -> ChildrenIterator<'a>;
 
     fn sys_tell(&self, msg: SystemMsg);
 }
@@ -102,7 +102,7 @@ impl<T> ActorReference for BoxedTell<T>
     }
 
     /// Iterator over children references.
-    fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a> {
+    fn children<'a>(&'a self) -> ChildrenIterator<'a> {
         (**self).children()
     }
 
@@ -214,7 +214,7 @@ impl ActorReference for BasicActorRef {
     }
 
     /// Iterator over children references.
-    fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a> {
+    fn children<'a>(&'a self) -> ChildrenIterator<'a> {
         self.cell.children()
     }
 
@@ -268,7 +268,7 @@ impl ActorReference for &BasicActorRef {
     }
 
     /// Iterator over children references.
-    fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a> {
+    fn children<'a>(&'a self) -> ChildrenIterator<'a> {
         self.cell.children()
     }
 
@@ -398,7 +398,7 @@ impl<Msg: Message> ActorReference for ActorRef<Msg> {
     }
 
     /// Iterator over children references.
-    fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a> {
+    fn children<'a>(&'a self) -> ChildrenIterator<'a> {
         self.cell.children()
     }
 
@@ -452,7 +452,7 @@ impl<Msg: Message> ActorReference for &ActorRef<Msg> {
     }
 
     /// Iterator over children references.
-    fn children<'a>(&'a self) -> Box<dyn Iterator<Item = BasicActorRef> + 'a> {
+    fn children<'a>(&'a self) -> ChildrenIterator<'a> {
         self.cell.children()
     }
 
